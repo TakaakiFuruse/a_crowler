@@ -2,3 +2,4 @@
 *.csv
 /.scrapy/httpcache/*
 /log/*
+*.log
