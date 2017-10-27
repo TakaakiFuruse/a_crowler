@@ -27,20 +27,13 @@ class AthomeStationSpider(scrapy.Spider):
              'nagasaki': '長崎県', 'kumamoto': '熊本県', 'oita': '大分県',
              'miyazaki': '宮崎県', 'kagoshima': '鹿児島県', 'okinawa': '沖縄県'}
 
-    # start_urls = [
-    #     f'https://www.athome.co.jp/chintai/{pref}/line/'for pref in prefs.keys()
-    # ]
-
     start_urls = [
-        'https://www.athome.co.jp/chintai/aomori/line/'
+        f'https://www.athome.co.jp/chintai/{pref}/line/'for pref in prefs.keys()
     ]
 
     name = 'athome_station'
 
     def parse(self, response):
-        pref_name = re.sub(
-            'https://www.athome.co.jp/chintai/(.+)/line/', r"\1", response.url
-        )
 
         links_to_follow = response.css(
             'div.area-group.search-items.limit-ensen.f-fixedTrigger.select-search-cond li label span a::attr(href)').extract()
@@ -52,12 +45,15 @@ class AthomeStationSpider(scrapy.Spider):
         attr_list = list(itertools.zip_longest(
             railway_names, bukken_counts, links_to_follow))
         for attr in attr_list:
-            yield response.follow(attr[2], self.parse_stations(response, attr[0], pref_name))
+            yield response.follow(attr[2], self.parse_stations)
 
-    def parse_stations(self, response, railway, pref_name):
-        station_names = response.css(
-            'ul#station-list li label span a::text').extract()
+    def parse_stations(self, response):
+        pref_name = re.sub(
+            'https://www.athome.co.jp/chintai/(.+)/.+/$', r"\1", response.url
+        )
 
+        station_names = response.css('ul#station-list li label span a::text').extract()
+        railway =  response.css('#search-station > h2 > label::text').extract()[0]
         for station_name in station_names:
             item_loader = StationItemLoader(item=StationItem())
             item_loader.add_value('web_site', 'AtHome賃貸')
