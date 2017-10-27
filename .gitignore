@@ -1,0 +1,4 @@
+*.pyc
+*.csv
+/.scrapy/httpcache/*
+/log/*
