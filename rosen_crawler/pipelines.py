@@ -9,3 +9,7 @@
 class HomesPipeline(object):
     def process_item(self, item, spider):
         return item
+
+class AtHomesPipeline(object):
+    def process_item(self, item, spider):
+        return item
