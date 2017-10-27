@@ -13,6 +13,7 @@ from scrapy.loader.processors import TakeFirst, MapCompose, Join, Identity
 class RailwayItem(scrapy.Item):
     web_site = scrapy.Field()
     pref_name = scrapy.Field()
+    # railway_company = scrapy.Field()
     railway = scrapy.Field()
     bukken_count = scrapy.Field()
 
@@ -23,11 +24,9 @@ class RailwayItemLoader(ItemLoader):
 
 
 class StationItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
     web_site = scrapy.Field()
-    pref = scrapy.Field()
-    railway_company = scrapy.Field()
+    pref_name = scrapy.Field()
+    # railway_company = scrapy.Field()
     railway = scrapy.Field()
     station = scrapy.Field()
 
