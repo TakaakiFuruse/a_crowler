@@ -91,4 +91,4 @@ HTTPCACHE_ENABLED = True
 
 #LOGGING
 LOG_ENABLED = True
-LOG_FILE = './log/rosen_crawler.log'
+LOG_FILE = 'rosen_crawler.log'

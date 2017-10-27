@@ -6,9 +6,15 @@
 # http://doc.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+import re
+from scrapy.loader import ItemLoader
+from scrapy.loader.processors import TakeFirst, MapCompose, Join, Identity
 
-
-class RosenCrawlerItem(scrapy.Item):
+class StationItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    web_site = scrapy.Field()
+    pref = scrapy.Field()
+    railway_company = scrapy.Field()
+    railway = scrapy.Field()
+    station = scrapy.Field()
