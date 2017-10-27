@@ -7,6 +7,7 @@ import itertools
 from scrapy.loader import ItemLoader
 from rosen_crawler.items import StationItem, RailwayItem
 from rosen_crawler.items import StationItemLoader, RailwayItemLoader
+from scrapy.utils.markup import remove_tags
 
 
 class AthomeRailwaySpider(scrapy.Spider):
@@ -26,13 +27,10 @@ class AthomeRailwaySpider(scrapy.Spider):
              'nagasaki': '長崎県', 'kumamoto': '熊本県', 'oita': '大分県',
              'miyazaki': '宮崎県', 'kagoshima': '鹿児島県', 'okinawa': '沖縄県'}
 
-    # start_urls = [
-    #     f'https://www.athome.co.jp/chintai/{pref}/line/'for pref in prefs.keys()
-    # ]
-
     start_urls = [
-        'https://www.athome.co.jp/chintai/aomori/line/'
+        f'https://www.athome.co.jp/chintai/{pref}/line/'for pref in prefs.keys()
     ]
+
 
     name = 'athome_railway'
 
@@ -41,19 +39,21 @@ class AthomeRailwaySpider(scrapy.Spider):
             'https://www.athome.co.jp/chintai/(.+)/line/', r"\1", response.url
         )
 
-        links_to_follow = response.css(
-            'div.area-group.search-items.limit-ensen.f-fixedTrigger.select-search-cond li label span a::attr(href)').extract()
-        railway_names = response.css(
-            'div.area-group.search-items.limit-ensen.f-fixedTrigger.select-search-cond li label span a::text').extract()
-        bukken_counts = response.css(
-            'div.area-group.search-items.limit-ensen.f-fixedTrigger.select-search-cond li label::text').extract()
+        attr_list = []
+        for field_group in response.css('section.fieldgroup'):
+            bukken_count = field_group.css('ul li label::text').extract()
+            railway_names = field_group.css('ul li label span').extract()
+            railway_company = field_group.css('h2.heading::text').extract()
+            railway_company_list = railway_company * len(railway_names)
+            zipped_list = [[a, b, c] for a, b, c in zip(
+                railway_company_list, railway_names, bukken_count)]
+            attr_list.append(zipped_list)
 
-        attr_list = list(itertools.zip_longest(
-            railway_names, bukken_counts, links_to_follow))
-        for attr in attr_list:
+        for attr in sum(attr_list, []):
             item_loader = RailwayItemLoader(item=RailwayItem())
             item_loader.add_value('web_site', 'AtHome賃貸')
             item_loader.add_value('pref_name', pref_name)
-            item_loader.add_value('railway', attr[0])
-            item_loader.add_value('bukken_count', attr[1])
+            item_loader.add_value('railway_company', attr[0])
+            item_loader.add_value('railway', remove_tags(attr[1]))
+            item_loader.add_value('bukken_count', attr[2])
             yield item_loader.load_item()

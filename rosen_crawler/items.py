@@ -13,24 +13,23 @@ from scrapy.loader.processors import TakeFirst, MapCompose, Join, Identity
 class RailwayItem(scrapy.Item):
     web_site = scrapy.Field()
     pref_name = scrapy.Field()
-    # railway_company = scrapy.Field()
+    railway_company = scrapy.Field()
     railway = scrapy.Field()
     bukken_count = scrapy.Field()
 
 
 class RailwayItemLoader(ItemLoader):
-    default_input_processor = Identity()
+    default_input_processor = MapCompose(str.strip)
     default_output_processor = Identity()
 
 
 class StationItem(scrapy.Item):
     web_site = scrapy.Field()
     pref_name = scrapy.Field()
-    # railway_company = scrapy.Field()
     railway = scrapy.Field()
     station = scrapy.Field()
 
 
 class StationItemLoader(ItemLoader):
-    default_input_processor = Identity()
+    default_input_processor = MapCompose(str.strip)
     default_output_processor = Identity()
