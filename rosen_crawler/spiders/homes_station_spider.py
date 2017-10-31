@@ -27,20 +27,16 @@ class HomesStationSpider(scrapy.Spider):
         urls = [
             elm.childNodes[0].data for elm in an_xml.getElementsByTagName('loc')
         ]
-        shuffle(urls)
 
-        # yield scrapy.Request(
-        #     url='https://www.homes.co.jp/',
-        #     callback=self.fake_request
-        # )
+        yield scrapy.Request(
+            url="https://www.google.co.jp/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwjfn-PqiprXAhVDXbwKHWIEAQUQFgg2MAA&url=https%3A%2F%2Fwww.homes.co.jp%2F&usg=AOvVaw0inESwIJEPMGVYFqDMjIMu",
+            callback=self.fake_request
+        )
+
         for url in urls:
             yield scrapy.Request(
                 url=url,
                 callback=self.parse,
-                meta={
-                    'dont_redirect': True,
-                    'handle_httpstatus_list': [302]
-                }
             )
 
     def fake_request(self, response):
