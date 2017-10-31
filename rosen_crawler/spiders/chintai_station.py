@@ -56,7 +56,7 @@ class ChintaiStationSpider(scrapy.Spider):
         ).extract()
 
         pref_name = re.sub(
-            'https:\/\/www\.chintai\.net\/select\/\?action=eki&prefKey=([a-z]+)&e=[0-9]+\Z', r"\1", response.url)
+            '\Ahttps:\/\/www\.chintai\.net\/select\/\?action=eki&prefKey=([a-z]+)&e=.+\Z', r"\1", response.url)
 
         for station_name in station_names:
             item_loader = StationItemLoader(item=StationItem())
