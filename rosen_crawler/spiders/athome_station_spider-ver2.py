@@ -7,10 +7,10 @@ import itertools
 from scrapy.loader import ItemLoader
 from rosen_crawler.items import StationItem, RailwayItem
 from rosen_crawler.items import StationItemLoader, RailwayItemLoader
-from scrapy.utils.markup import remove_tags
+from scrapy.utils.response import open_in_browser
 
 
-class AthomeStationSpider(scrapy.Spider):
+class AthomeStationSpiderVer1(scrapy.Spider):
     prefs = {'hokkaido': '北海道', 'aomori': '青森県', 'iwate': '岩手県',
              'miyagi': '宮城県', 'akita': '秋田県', 'yamagata': '山形県',
              'fukushima': '福島県', 'ibaraki': '茨城県', 'tochigi': '栃木県',
@@ -31,7 +31,7 @@ class AthomeStationSpider(scrapy.Spider):
         f'https://www.athome.co.jp/chintai/{pref}/line/'for pref in prefs.keys()
     ]
 
-    name = 'athome_station'
+    name = 'athome_station_ver2'
 
     def parse(self, response):
 
@@ -52,12 +52,16 @@ class AthomeStationSpider(scrapy.Spider):
             'https://www.athome.co.jp/chintai/(.+)/.+/$', r"\1", response.url
         )
 
-        station_names =  response.css('ul#station-list li label span').extract()
-        railway = response.css('#search-station > h2 > label::text').extract()[0]
+        station_names = response.css('ul#station-list li label span a::text').extract()
+        station_names_disabled = response.css('section#search-station li span::text').extract()
+        railway =  response.css('#search-station > h2 > label::text').extract()[0]
+
+        station_names += station_names_disabled
+
         for station_name in station_names:
             item_loader = StationItemLoader(item=StationItem())
             item_loader.add_value('web_site', 'AtHome賃貸')
             item_loader.add_value('pref_name', pref_name)
             item_loader.add_value('railway', railway)
-            item_loader.add_value('station', remove_tags(station_name))
+            item_loader.add_value('station', station_name)
             yield item_loader.load_item()

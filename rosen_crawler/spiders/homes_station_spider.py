@@ -2,8 +2,6 @@
 import scrapy
 import re
 
-from scrapy_splash import SplashRequest
-
 from scrapy.loader import ItemLoader
 from rosen_crawler.items import StationItem, RailwayItem
 from rosen_crawler.items import StationItemLoader, RailwayItemLoader
@@ -30,26 +28,25 @@ class HomesStationSpider(scrapy.Spider):
             elm.childNodes[0].data for elm in an_xml.getElementsByTagName('loc')
         ]
         shuffle(urls)
-        yield scrapy.Request(
-            url='https://www.homes.co.jp/',
-            callback=self.fake_request
-        )
-        yield scrapy.Request(
-            url='https://www.homes.co.jp/chintai/hokkaido/city/',
-            callback=self.fake_request
-        )
+
+        # yield scrapy.Request(
+        #     url='https://www.homes.co.jp/',
+        #     callback=self.fake_request
+        # )
         for url in urls:
             yield scrapy.Request(
                 url=url,
-                callback=self.parse
+                callback=self.parse,
+                meta={
+                    'dont_redirect': True,
+                    'handle_httpstatus_list': [302]
+                }
             )
 
     def fake_request(self, response):
         pass
 
     def parse(self, response):
-        print(response.body)
-
         enabled_stations = response.css(
             'ul.checkboxLinkList li label span a::text'
         ).extract()
@@ -67,7 +64,7 @@ class HomesStationSpider(scrapy.Spider):
 
         for station_name in stations:
             item_loader = StationItemLoader(item=StationItem())
-            item_loader.add_value('web_site', 'AtHome賃貸')
+            item_loader.add_value('web_site', 'HOMESチンタイ')
             item_loader.add_value('pref_name', pref_name)
             item_loader.add_value('railway', remove_tags(railway_name))
             item_loader.add_value('station', remove_tags(station_name))
