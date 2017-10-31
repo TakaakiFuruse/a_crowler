@@ -29,7 +29,7 @@ class HomesStationSpider(scrapy.Spider):
         ]
 
         yield scrapy.Request(
-            url="https://www.google.co.jp/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwjfn-PqiprXAhVDXbwKHWIEAQUQFgg2MAA&url=https%3A%2F%2Fwww.homes.co.jp%2F&usg=AOvVaw0inESwIJEPMGVYFqDMjIMu",
+            url="https://www.homes.co.jp",
             callback=self.fake_request
         )
 
