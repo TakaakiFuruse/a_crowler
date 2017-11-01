@@ -11,7 +11,7 @@ from scrapy.shell import inspect_response
 
 class HomesRailwaySpider(scrapy.Spider):
     name = 'homes_railway'
-     prefs = {'aomori': '青森県', 'hokkaido': '北海道', 'iwate': '岩手県',
+    prefs = {'aomori': '青森県', 'hokkaido': '北海道', 'iwate': '岩手県',
              'miyagi': '宮城県', 'akita': '秋田県', 'yamagata': '山形県',
              'fukushima': '福島県', 'ibaraki': '茨城県', 'tochigi': '栃木県',
              'gunma': '群馬県', 'saitama': '埼玉県', 'chiba': '千葉県', 'tokyo': '東京都',
