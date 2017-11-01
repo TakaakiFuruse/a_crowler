@@ -50,10 +50,11 @@ class HomesStationSpider(scrapy.Spider):
 
     def parse(self, response):
         if re.match('https://www.homes.co.jp/distil.+', response.url):
-            time.sleep(3)
+            time.sleep(5)
             yield scrapy.Request(
-                url=response.request.meta['redirect_urls'],
+                url=response.request.meta['redirect_urls'][0],
                 callback=self.parse,
+                dont_filter=True
             )
         else:
             enabled_stations = response.css(
