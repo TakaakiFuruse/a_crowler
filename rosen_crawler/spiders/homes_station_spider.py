@@ -13,7 +13,6 @@ from xml.dom import minidom
 
 
 class HomesStationSpider(scrapy.Spider):
-    handle_http_status = ['303', '301', '302']
     name = 'homes_station'
 
     custom_settings = {
@@ -26,7 +25,7 @@ class HomesStationSpider(scrapy.Spider):
         a_sitemap = open('./homes-sitemap-chintai-rosen.xml')
         an_xml = minidom.parse(a_sitemap)
         urls = [
-            elm.childNodes[0].data for elm in an_xml.getElementsByTagName('loc')
+            elm.childNodes[0].data.rstrip() for elm in an_xml.getElementsByTagName('loc')
         ]
 
         yield scrapy.Request(
