@@ -3,15 +3,15 @@ import re
 import time
 
 from scrapy.loader import ItemLoader
-from rosen_crawler.items import StationItem, RailwayItem
-from rosen_crawler.items import StationItemLoader, RailwayItemLoader
+from rosen_crawler.items import HomesRailwayItem, HomesRailwayItemLoader
 from itertools import chain
 from scrapy.utils.markup import remove_tags
+from scrapy.shell import inspect_response
 
 
 class HomesRailwaySpider(scrapy.Spider):
     name = 'homes_railway'
-    prefs = {'hokkaido': '北海道', 'aomori': '青森県', 'iwate': '岩手県',
+    prefs = {'aomori': '青森県', 'hokkaido': '北海道', 'iwate': '岩手県',
              'miyagi': '宮城県', 'akita': '秋田県', 'yamagata': '山形県',
              'fukushima': '福島県', 'ibaraki': '茨城県', 'tochigi': '栃木県',
              'gumma': '群馬県', 'saitama': '埼玉県', 'chiba': '千葉県', 'tokyo': '東京都',
@@ -66,26 +66,38 @@ class HomesRailwaySpider(scrapy.Spider):
                 dont_filter=True
             )
         else:
-            enabled_rails = response.css(
-                ''
-            ).extract()
-            enabled_rails = response.css(
-                ''
-            ).extract()
+            railway_boxes = response.css(
+                'div.mod-checkList.rosen.fitting fieldset')
 
-            railway_name = response.css('span.linkNameAll').extract_first()
+            for railway_box in railway_boxes:
+                item_loader = HomesRailwayItemLoader(
+                    item=HomesRailwayItem()
+                )
 
-            pref_name = re.sub(
-                'https://www.homes.co.jp/(.+)/line/$', r"\1", response.url
-            )
+                railway_company = remove_tags(
+                    railway_box.css('legend').extract_first()
+                )
 
-            railways = enabled_rails + enabled_rails
+                bukken_count = remove_tags(
+                    railway_box.css('ul li label span').extract_first()
+                )
 
-            for railway_names in railways:
-                item_loader = RailwayItemLoader(item=RailwayItem())
+                railway_name = re.sub(
+                    '\n|\s',
+                    '',
+                    remove_tags(
+                        raliway_box.css('ul li label').extract_first()
+                    )
+                )
+
+                pref_name = re.sub(
+                    'https://www.homes.co.jp/(.+)/line/$', r"\1", response.url
+                )
+
                 item_loader.add_value('web_site', 'HOMES')
                 item_loader.add_value('pref_name', pref_name)
-                item_loader.add_value('railway_company', '')
-                item_loader.add_value('railway', '')
-                item_loader.add_value('bukken_count', '')
+                item_loader.add_value('railway_company', railway_company)
+                item_loader.add_value('railway', railway_name)
+                item_loader.add_value('bukken_count', bukken_count)
+                item_loader.add_value('url', response.url)
                 yield item_loader.load_item()
