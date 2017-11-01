@@ -4,8 +4,8 @@ import re
 import time
 
 from scrapy.loader import ItemLoader
-from rosen_crawler.items import StationItem, RailwayItem
-from rosen_crawler.items import StationItemLoader, RailwayItemLoader
+from rosen_crawler.items import HomesStationItem
+from rosen_crawler.items import HomesStationItemLoader
 from itertools import chain
 from scrapy.utils.markup import remove_tags
 from random import shuffle
@@ -28,8 +28,7 @@ class HomesStationSpider(scrapy.Spider):
             elm.childNodes[0].data.replace('\n', '')
             for elm in an_xml.getElementsByTagName('loc')
         ]
-        import pdb
-        pdb.set_trace()
+
         yield scrapy.Request(
             url='https://www.homes.co.jp',
             callback=self.fake_request,
@@ -74,7 +73,7 @@ class HomesStationSpider(scrapy.Spider):
             stations = enabled_stations + disabled_stations
 
             for station_name in stations:
-                item_loader = StationItemLoader(item=StationItem())
+                item_loader = HomesStationItemLoader(item=HomesStationItem())
                 item_loader.add_value('web_site', 'HOMES')
                 item_loader.add_value('pref_name', pref_name)
                 item_loader.add_value('railway', remove_tags(railway_name))
