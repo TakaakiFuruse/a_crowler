@@ -67,7 +67,8 @@ class HomesStationSpider(scrapy.Spider):
             railway_name = response.css('span.linkNameAll').extract_first()
 
             pref_name = re.sub(
-                'https://www.homes.co.jp/chintai/(.+)/.+/$', r"\1", response.url
+                'https://www.homes.co.jp/chintai/(.+)/.+/$', r"\1",
+                response.url
             )
 
             stations = enabled_stations + disabled_stations
@@ -78,4 +79,5 @@ class HomesStationSpider(scrapy.Spider):
                 item_loader.add_value('pref_name', pref_name)
                 item_loader.add_value('railway', remove_tags(railway_name))
                 item_loader.add_value('station', remove_tags(station_name))
+                item_loader.add_value('url', response.url)
                 yield item_loader.load_item()
