@@ -92,7 +92,7 @@ class HomesStationSpider(scrapy.Spider):
             for station_name in stations:
                 item_loader = HomesStationItemLoader(item=HomesStationItem())
                 item_loader.add_value('web_site', 'HOMES')
-                item_loader.add_value('pref_name', pref_name)
+                item_loader.add_value('pref_name', self.prefs[pref_name])
                 item_loader.add_value('railway', remove_tags(railway_name))
                 item_loader.add_value('station', remove_tags(station_name))
                 item_loader.add_value('url', response.url)
