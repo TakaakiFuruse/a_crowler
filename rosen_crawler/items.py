@@ -33,3 +33,27 @@ class StationItem(scrapy.Item):
 class StationItemLoader(ItemLoader):
     default_input_processor = MapCompose(str.strip)
     default_output_processor = Identity()
+
+class HomesStationItemLoader(ItemLoader):
+    default_input_processor = MapCompose(str.strip)
+    default_output_processor = Identity()
+
+
+class HomesRailwayItemLoader(ItemLoader):
+    default_input_processor = MapCompose(str.strip)
+    default_output_processor = Identity()
+
+class HomesRailwayItem(scrapy.Item):
+    web_site = scrapy.Field()
+    pref_name = scrapy.Field()
+    railway_company = scrapy.Field()
+    railway = scrapy.Field()
+    bukken_count = scrapy.Field()
+    url = scrapy.Field()
+
+class HomesStationItem(scrapy.Item):
+    web_site = scrapy.Field()
+    pref_name = scrapy.Field()
+    railway = scrapy.Field()
+    station = scrapy.Field()
+    url = scrapy.Field()
