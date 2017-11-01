@@ -25,9 +25,11 @@ class HomesStationSpider(scrapy.Spider):
         a_sitemap = open('./homes-sitemap-chintai-rosen.xml')
         an_xml = minidom.parse(a_sitemap)
         urls = [
-            elm.childNodes[0].data.rstrip() for elm in an_xml.getElementsByTagName('loc')
+            elm.childNodes[0].data.replace('\n', '')
+            for elm in an_xml.getElementsByTagName('loc')
         ]
-
+        import pdb
+        pdb.set_trace()
         yield scrapy.Request(
             url='https://www.homes.co.jp',
             callback=self.fake_request,
